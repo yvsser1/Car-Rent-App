@@ -36,7 +36,7 @@ export class Footer extends Component {
         </Container>
         <div className='footer-copyright'>
           <Container>
-            <p>&nbsp; 2019 Rent Car . All rights reserved</p>
+            <p>&nbsp; 2024 Rent Car . All rights reserved</p>
           </Container>
         </div>
       </footer>

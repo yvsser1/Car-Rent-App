@@ -48,3 +48,17 @@ export const signUp = (newUser) => {
     })
   }
 }
+
+export const resetPassword = (email) => {
+  return (dispatch, getState, { getFirebase }) => {
+    const firebase = getFirebase();
+    return firebase.auth().sendPasswordResetEmail(email) // Return the promise
+      .then(() => {
+        dispatch({ type: 'RESET_PASSWORD_SUCCESS' });
+      })
+      .catch((err) => {
+        dispatch({ type: 'RESET_PASSWORD_ERROR', err });
+        throw err; // Re-throw the error to be caught in the component
+      });
+  }
+}

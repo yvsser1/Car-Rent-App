@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { signIn, signOut, signUp } from '../../store/actions/authAction'
+import { signIn, signOut, signUp, resetPassword } from '../../store/actions/authAction'
 import Tabs from 'react-bootstrap/Tabs'
 import Tab from 'react-bootstrap/Tab'
 import 'react-phone-number-input/style.css'
@@ -21,7 +21,8 @@ class Login extends Component {
     phoneNumber: '',
     accountType: 'Company',
     companyName: '',
-    userAddress: ''
+    userAddress: '',
+    resetMessage: '' // New state property for success message
   }
 
   componentWillMount() {
@@ -40,6 +41,16 @@ class Login extends Component {
   handleSignUp = (e) => {
     e.preventDefault()
     this.props.signUp(this.state)
+  }
+  handlePasswordReset = (e) => {
+    e.preventDefault();
+    this.props.resetPassword(this.state.email)
+      .then(() => {
+        this.setState({ resetMessage: 'Password reset link sent successfully!' });
+      })
+      .catch((err) => {
+        this.setState({ resetMessage: 'Wrong Mail! Error sending password reset link.' });
+      });
   }
   render() {
     console.log(this.props.auth)
@@ -114,6 +125,16 @@ class Login extends Component {
                 {this.props.authError ? <p>{this.props.authError}</p> : null}
               </Form>
             </Tab>
+            <Tab eventKey="reset" title="Reset Password">
+              <Form onSubmit={this.handlePasswordReset}>
+                <Form.Group controlId="formBasicEmail">
+                  <Form.Label>Email</Form.Label>
+                  <Form.Control type="email" name='email' value={this.state.email} onChange={this.handleChange} placeholder='Your email' />
+                </Form.Group>
+                <Button type='submit' variant="primary">Reset Password</Button>
+              </Form>
+              {this.state.resetMessage && <p>{this.state.resetMessage}</p>} {/* Conditionally render success message */}
+            </Tab>
           </Tabs>
         </Container>
       </div>
@@ -131,7 +152,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     signIn: (creds) => dispatch(signIn(creds)),
     signUp: (creds) => dispatch(signUp(creds)),
-    signOut: () => dispatch(signOut())
+    signOut: () => dispatch(signOut()),
+    resetPassword: (email) => dispatch(resetPassword(email))
   }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(Login)
